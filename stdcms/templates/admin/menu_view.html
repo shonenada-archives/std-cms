@@ -1,0 +1,71 @@
+{% extends 'admin/menu.html' %}
+
+{% block menu_list %}
+  <div id="content_right" class="clearfix">
+    <div id="content_right_top">
+      <span id="location">当前位置：<a href="{{ siteUrl('admin/menu') }}">菜单管理</a> &gt; {{ menu.defaultTitle }}</span>
+      <a class="a-btn add-new" href="{{ siteUrl('admin/menu/' ~ menu.id ~ '/create') }}">新增</a>
+    </div>
+    <form action="{{ siteUrl('admin/menu/save') }}" method="post" id="submit-form">
+      <div id="show_list" class="clearfix">
+        <table>
+          <tr>
+            <th id="order">排序</th>
+            <th id="title">标题</th>
+            <th id="type">类型</th>
+            <th id="URL">外部URL</th>
+            <th id="open_style">打开方式</th>
+            <th id="display">显示</th>
+            <th id="edit">编辑</th>
+          </tr>
+          {% set i = 0 %}
+          {% for menu in menu.subMenus %}
+          {% set i = i + 1 %}
+          <tr class="{% if i % 2 == 0 %}odd{% else %}even{% endif %} one_menu" data-id="{{ menu.id }}" data-type="{{ menu.type }}">
+            <td class="order">
+              <input type="text" name="sort" class="order" value="{{ menu.sort }}" />
+            </td>
+            <td>
+              <input type="text" name="title" class="links" value="{{ menu.defaultTitle }}"/>
+            </td>
+            <td>
+              <select name="type" class="select-type first-menu-select" title="无法直接修改菜单类型">
+                <option value="0">节点菜单</option>
+                <option value="1"{% if menu.type == 1 %} selected="selected"{% endif %}>单页内容</option>
+                <option value="2"{% if menu.type == 2 %} selected="selected"{% endif %}>多记录列表</option>
+                <option value="3"{% if menu.type == 3 %} selected="selected"{% endif %}>外部URL</option>
+              </select>
+            </td>
+            <td>
+              <input type="text" name="outside_url" class="outlinks" value="{{ menu.outside_url }}" style="{% if menu.type != 3 %}display: none;{% endif %}"/>
+            </td>
+            <td>
+              <select name="open_style">
+                <option value="0">原窗口打开</option>
+                <option value="1"{% if menu.open_style == 1 %} selected="selected"{% endif %}>新窗口打开</option>
+              </select>
+            </td>
+            <td>
+              <select name="is_show">
+                <option value="1">是</option>
+                <option value="0"{% if menu.is_show == 0 %} selected="selected"{% endif %}>否</option>
+              </select>
+            </td>
+            <td>
+              {% set menu_delete_url = siteUrl('admin/menu/') ~ menu.id ~ '/delete' %}
+              <a href="{{ siteUrl('admin/menu/' ~ menu.id) }}">子菜单</a>
+              <a class="deletefirst" href="{{ menu_delete_url }}" data-count="{{ menu.article.count }}">删除</a>
+            </td>
+          </tr>
+          {% endfor %}
+        </table>
+      </div>
+      <div class="text_end">
+          <span>
+              <a data-href="{{ siteUrl('admin/menu/save') }}" href="{{ siteUrl('admin/menu/save') }}" id="save">保存</a>
+              <a href="javascript:" id="cancel">取消</a>
+          </span>
+      </div>
+    </form>
+  </div>
+{% endblock %}

@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="article-box">
+  <h2>{{ top_menu.title }}</h2>
+  
+  <div class="sidebar-nav">
+    <h2>{{ top_menu.title }}</h2>
+    <ul>
+    {% if top_menu.hasSub() %}
+      {% for one in top_menu.subMenus %}
+        {{ tools.get_menu_link(one) }}
+        {% for each in one.subMenus %}
+        {{ tools.get_menu_link(each, 'sub') }}
+        {% endfor %}
+      {% endfor %}
+    {% else %}
+        {{ tools.get_menu_link(top_menu) }}
+    {% endif %}
+    </ul>
+  </div>
+
+  <div class="article-list">
+    <div class="top-nav">
+      <a class="current">{{ menu.title }}</a>
+    </div>
+    <ul>
+      {% for a in articles %}
+      <li>{% if a.is_top %}<img src="{{ siteUrl('static/images/admin/icon_up.gif') }}" alt="置顶" title="置顶"> {% endif %}<a href="{{ a.redirect_url ? a.redirect_url : siteUrl('article/' ~ a.id) }}"{{ a.open_style == 1 ? 'target="_blank"' : '' }}>{{ a.title | ellipsis(50) }}</a> <span class="datetime">{{ a.created | date('Y-m-d') }}</span></li>
+      {% endfor %}
+    </ul>
+  </div>
+
+</div>
+{% endblock %}

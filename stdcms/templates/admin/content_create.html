@@ -1,0 +1,138 @@
+{% extends 'admin/base.html' %}
+
+{% block static %}
+<link type="text/css" href="{{ siteUrl('static/styles/admin/page/content.css') }}" rel="stylesheet"/>
+<script type="text/javascript" src="{{ siteUrl('static/scripts/plugins/kindeditor/kindeditor-min.js') }}" charset="utf-8"></script>
+<script type="text/javascript" src="{{ siteUrl('static/scripts/plugins/kindeditor/lang/zh_CN.js') }}" charset="utf-8"></script>
+<script type="text/javascript" src="{{ siteUrl('static/scripts/plugins/DatePicker/WdatePicker.js') }}" charset="utf-8"></script>
+{% endblock %}
+
+{% block content %}
+<div id="content" class="clearfix">
+  <div id="content_left">
+    <div id="headtitle">内容管理</div>
+    <div id="left_nav">
+      {% for menu in admin_menus %}
+      <ul>
+        <li class="left-first-nav">
+        <a class="list_title"{% if menu.type in [1,2] %} href="{{ siteUrl('admin/content/menu/' ~ menu.id) }}"{% endif %}>{{ menu.defaultTitle }}</a>
+          <ul class="left-second-nav" style="display:{% if menu.id == focus_menu.id %}block{% else %}none{% endif %};">
+            {% for s in menu.subMenus %}
+            <li><a class="{% if focus_sub_menu.id == s.id %}open{% endif %}" href="{{ siteUrl('admin/content/menu/' ~ s.id ) }}">{{ s.defaultTitle }}</a></li>
+            {% endfor %}
+          </ul>
+        </li>
+      </ul>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div id="content_right" class="clearfix">
+    <div id="content_right_top">
+      <span id="location">当前位置：内容管理&nbsp;&gt;&gt;&nbsp;{{ focus_menu.defaultTitle }}{% if focus_sub_menu %}&nbsp;&gt;&gt;&nbsp;{{ focus_sub_menu.defaultTitle }}{% endif %}&nbsp;&gt;&gt;&nbsp;新增</span>
+    </div>
+    <form class="add-form" method="post" action="{{ siteUrl('admin/content/menu/' ~ post_menu.id ~ '/create') }}" class="">
+      <div class="editor-title-div">
+        <input type="text" name="title" value="请在这里输入标题" maxlength="50" class="editor-title" onfocus="if(this.value == '请在这里输入标题') this.value='';" onblur="if(this.value == '') this.value='请在这里输入标题';" placeholder="请在这里输入标题" style="width:730px;" />
+
+        <input type="text" name="title_eng" value="" maxlength="50" class="editor-title" onfocus="if(this.value == 'Title in English') this.value='';" onblur="if(this.value == '') this.value='Title in English';" placeholder="Title in English" style="width:730px;" />
+      </div>
+      <div class="editor-other-div clearfix">
+        <div>
+          <label>分类：</label>
+          <select class="search-select mt2r2" name="category_id" data-classify="{{ menu.classify }}" style="width:150px;">
+            <option value="0">暂无分类</option>
+            {% for ca in post_menu.categories %}
+            <option value="{{ ca.id }}">{{ ca.defaultTitle }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div>
+          <label>创建时间：</label>
+          <input type="text" class="search_txt mt2r2 Wdate" name="createtime" value="{{ date() | date('Y-m-d H:i:s') }}" onclick="WdatePicker()" style="width:165px;" readonly=readonly />
+        </div>
+        <div>
+          <label>最后修改时间：</label>
+          <input type="text" class="search_txt mt2r2 Wdate" name="moditime" value="{{ date() | date('Y-m-d H:i:s') }}" onclick="WdatePicker()" style="width:165px;" readonly=readonly />
+        </div>
+        <div style="width:451px;margin-top:5px;">
+          <label>链接地址：</label>
+          <input type="text" name="url" class="" {% if post_menu.type == 1 %}disabled="disabled" title="单页内容不可使用链接地址！"{% endif %} value="该链接不为空时，点击该标题后直接跳往该链接" style="width:371px;color:#666" onfocus="if (this.value =='该链接不为空时，点击该标题后直接跳往该链接'){this.value =''}" onblur="if (value ==''){value='该链接不为空时，点击该标题后直接跳往该链接'}" />
+        </div>
+        <div style="width:200px;margin-top:5px;">
+          <label>打开方式：</label>
+          <select name="open_style" style="width:125px;color:#666"  {% if post_menu.type == 1 %}disabled="disabled" title="单页内容不可用！"{% endif %}>
+          <option value="0">原窗口打开</option>
+          <option value="1" >新窗口打开</option>
+          </select>
+        </div>
+        <div style="width:60px;margin-top:5px;text-align:center;font-size:14px;">
+          <a href="javascript:void()" id="tran-en-btn">English</a>
+          <a href="javascript:void()" id="tran-zh-btn">中文</a>
+        </div>
+      </div>
+    <div id="editor_container">
+      <textarea id="editor_id" name="content" style="width:730px;height:500px;"></textarea>
+    </div>
+    <div id="editor_eng_container">
+      <textarea id="editor_eng" name="content_eng" style="width:730px;height:500px;"></textarea>
+    </div>
+    <div class="submit-div">
+      <input type="hidden" name="timestamp" value="{{ timestamp }}" />
+      <input type="submit" value="提交" class="add-submit" />
+    </div>
+    </form>
+  </div>
+</div>
+
+<script type="text/javascript">
+$(function(){
+
+  $("#editor_eng_container").hide();
+  $("#tran-zh-btn").hide();
+  $("#tran-en-btn").click(function() {
+    $(this).hide();
+    $("#tran-zh-btn").show();
+    $("#editor_container").hide()
+    $("#editor_eng_container").show()
+  });
+    $("#tran-zh-btn").click(function() {
+    $(this).hide();
+    $("#tran-en-btn").show();
+    $("#editor_eng_container").hide()
+    $("#editor_container").show()
+  });
+
+  //导航栏
+  $('li.left-first-nav a').click(function(){
+    $(this).parent().find('ul').toggle("fast");
+  });
+  //文本输入框
+  var editor = KindEditor.create('#editor_id',{
+    width: '730px',
+    resizeType: 1,
+    uploadJson: '{{ siteUrl("file/upload?timestamp=" ~ timestamp) }}',
+    fileManagerJson: '{{ siteUrl("file/manager") }}',
+    allowFileManager: true
+  });
+  var editor_eng = KindEditor.create('#editor_eng',{
+    width: '730px',
+    resizeType: 1,
+    uploadJson: '{{ siteUrl("file/upload?timestamp=" ~ timestamp ) }}',
+    fileManagerJson: '{{ siteUrl("file/manager") }}',
+    allowFileManager: true
+  });
+  //提交前判断
+  $(".add-submit").click(function(){
+    if ($("input[name='title']").val() == "请在这里输入标题" || $("input[name='title']").val() == ""){
+    alert("标题不能为空！");
+    return false;
+  }
+  if ($("select[name='category_id']").attr("data-classify") == "1" && $("select[name='category_id']").val() == "0"){
+    alert("请选择分类！");
+    return false;
+  }
+  });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <title>{% if webTitle %}{{ webTitle }}{% else %}{{ siteTitle }}{% endif %} - 后台管理</title>
+  <link rel="shortcut icon" href="{{ siteUrl('static/favicon.ico') }}" type="image/x-icon" />
+  <link type="text/css" href="{{ siteUrl('static/styles/admin/common.css') }}" rel="stylesheet" />
+  <script type="text/javascript" src="{{ siteUrl('static/scripts/plugins/jquery-1.7.2.min.js') }}" charset="utf-8"></script>
+  <script type="text/javascript" src="{{ siteUrl('static/scripts/plugins/jquery.json-2.3.min.js') }}"></script>
+  <script type="text/javascript" src="{{ siteUrl('static/scripts/common.js') }}"></script>
+  {% block static %}
+  {% endblock %}
+</head>
+<body>
+  <div id="main">
+    <!-- 头部 -->
+    <div id="header" class="clearfix">
+      <div id="head_logo">
+        <a href="{{ siteUrl('/') }}">后台管理</a>
+      </div>
+      <div id="welcome">
+        <ul>
+          <li>欢迎您回来，{{ loggedUser.name }}</li>
+          <li>
+            <a onclick="if(!confirm('是否注销登录？')) return false;" href="{{ siteUrl('/admin/signout') }}">| 注销 |</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <!-- 导航 -->
+    <div id="nav" class="clearfix">
+      <ul>
+        {% for p in loggedUser.getPermitModels() %}
+        <li class="first-nav">
+          <a href="{{ siteUrl('/admin/' ~ p.name) }}">{{ p.title }}</a>
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+    <!-- *************内容页************* -->
+    {% block content %}
+    {% endblock %}
+  </div>
+</body>
+</html>

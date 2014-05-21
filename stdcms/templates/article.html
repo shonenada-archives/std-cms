@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="article-box">
+  <h2>{{ top_menu.title }}</h2>
+  
+  <div class="sidebar-nav">
+    <h2>{{ top_menu.title }}</h2>
+    <ul>
+    {% if top_menu.hasSub() %}
+      {% for one in top_menu.subMenus %}
+        {{ tools.get_menu_link(one) }}
+        {% for each in one.subMenus %}
+        {{ tools.get_menu_link(each, 'sub') }}
+        {% endfor %}
+      {% endfor %}
+    {% else %}
+        {{ tools.get_menu_link(top_menu) }}
+    {% endif %}
+    </ul>
+  </div>
+
+  <div class="article">
+    <div class="title">{{ article.title }}</div>
+    <div class="info">
+      {% if article.author.name %}{{ trans('Author') }}: {{ article.author.name }} |{% endif %}
+      {% if article.created %}{{ trans('Post Date') }}: {{ article.created | date('Y-m-d') }} | {% endif %}
+      {{ trans('Counts') }}: {{ article.view_count }}<br />
+      {% if loggedUser.hasPermission('/admin/content/' ~ article.id ~ '/edit', 'GET') %}
+       <a href="{{ siteUrl('/admin/content/' ~ article.id ~ '/edit') }}">[{{ trans('Edit') }}]</a>
+      {% endif %}
+    </div>
+    <div class="content">
+     <p style="text-indent:24.0pt;">
+      {{ article.content | raw }}
+    </p>
+    </div>
+  </div>
+
+</div>
+{% endblock %}
