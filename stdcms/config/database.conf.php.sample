@@ -1,0 +1,24 @@
+<?php
+
+/**
+ * 数据库配置
+ * @author
+ *
+ */
+
+return array(
+    'dbname' => 'app',
+    'user' => 'root',
+    'password' => '',
+    'host' => 'localhost',
+    'driver' => 'pdo_mysql'
+    'charset' => 'utf8',
+    'driverOptions' => array(
+        1002=>'SET NAMES utf8'
+    )
+);
+
+// return array(
+//     'driver' => 'pdo_sqlite',
+//     'path' => mb_convert_encoding(DOCROOT . 'runtime/app.sqlite', 'UTF-8', 'GBK'),
+// );
