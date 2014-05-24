@@ -10,4 +10,11 @@ class Helper {
         return round($wastage*1000, 2);
     }
 
+    static public function getUserLanguageCode() {
+        $userLanguage = \GlobalEnv::get('app')->getCookie('lang.code');
+        if (!$userLanguage)
+            return \GlobalEnv::get('app')->config('translation.default.code');
+        return $userLanguage;
+    }
+
 }

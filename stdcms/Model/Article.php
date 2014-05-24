@@ -133,6 +133,7 @@ class Article extends ModelBase {
     public $is_deleted;
 
     public function __construct() {
+        $this->created = new \DateTime("now");
         $this->is_deleted = false;
         $this->is_hide = false;
         $this->view_count = 0;
@@ -345,8 +346,8 @@ class Article extends ModelBase {
         $builder = $builder->andWhere('l.code = :lang_code');
         $builder = $builder->orderBy('n.is_top DESC, n.created', 'DESC');  # what the hell ??
         $builder = $builder->setParameter('keyword', '%'.$keyword.'%');
-        $builder = $builder->setParameter('lang_code', \GlobalEnv::get('app')->getCookie('lang.code'));
-        $query = $builder->getQuery()->setFirstResult(0);
+        $builder = $builder->setParameter('lang_code', \Util\Helper::getUserLanguageCode());
+        $query = $builder->getQuery();
         return $query->useQueryCache(false)->getResult();
     }
 
