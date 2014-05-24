@@ -8,6 +8,7 @@ class ViewFilter {
 
     static public $lang = null;
     static public $ellipsis = null;
+    static public $removeHTML = null;
 
     static public function init() {
 
@@ -28,9 +29,14 @@ class ViewFilter {
             return $string;
         });
 
+        static::$removeHTML = new \Twig_SimpleFilter('removeHTML', function($content) {
+            return \Util\HTMLHelper::removeHTML($string);
+        });
+
         static::$filters = array(
             static::$lang,
             static::$ellipsis,
+            static::$removeHTML,
         );
     }
 
