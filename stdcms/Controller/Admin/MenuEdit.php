@@ -64,11 +64,14 @@ class MenuEdit extends AdminBase {
         if ($success) {
             $menu->populateFromArray($data)->save();
             $zh = $menu->translate('zh');
-            $en = $menu->translate('en');
             $zh->title = $data['title'];
-            $en->title = $data['title_eng'];
             $zh->save();
-            $en->save();
+
+            if (isset($data['title_eng'])) {
+                $en = $menu->translate('en');
+                $en->title = $data['title_eng'];
+                $en->save();
+            }
         }
 
         return json_encode(array(

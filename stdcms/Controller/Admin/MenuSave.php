@@ -27,11 +27,14 @@ class MenuSave extends AdminBase {
                 }
                 $menu->populateFromArray($m)->save();
                 $zh = $menu->translate('zh');
-                $en = $menu->translate('en');
                 $zh->title = $m['title'];
-                $en->title = $m['title_eng'];
                 $zh->save();
-                $en->save();
+
+                if (isset($data['title_eng'])) {
+                    $en = $menu->translate('en');
+                    $en->title = $data['title_eng'];
+                    $en->save();
+                }
             }
         }
         return json_encode(array('success' => true, 'info' => '保存成功!'));
