@@ -82,7 +82,7 @@ class ContentCreate extends AdminBase {
             $f->save();
         }
         $_SESSION['upload_buffer'] = array();
-        return self::redirect(self::urlFor('admin_content_get', array('mid' => $menu_id)));
+        return self::redirect(self::urlFor('admin_content_view_get', array('mid' => $menu_id)));
     }
 
 }
