@@ -11,6 +11,7 @@ return array(
     'cookies.cipher_mode' => MCRYPT_MODE_CBC,
     'cookies.httponly' => true,
     'http.version' => '1.1',
-    'translation.default.code' => 'zh',
     'captcha-salt' => 'abcdefghijkmnpqrstuvwxyzABCDEFGHIJKMNPQRSTUVWXYZ',
+    'translation.default.code' => 'zh',
+    'internationalization' => false,
 );

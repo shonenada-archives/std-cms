@@ -34,8 +34,9 @@
     <form class="add-form" method="post" action="{{ siteUrl('admin/content/' ~ article.id ~ '/edit') }}" class="">
       <div class="editor-title-div">
         <input type="text" name="title" value="{{ article.defaultTitle }}" maxlength="50" class="editor-title" onfocus="if(this.value == '请在这里输入标题') this.value='';" onblur="if(this.value == '') this.value='请在这里输入标题';" placeholder="请在这里输入标题" style="width:730px;" />
-
+        {% if internationalization %}
         <input type="text" name="title_eng" value="{{ article | lang('title', 'en') }}" maxlength="50" class="editor-title" onfocus="if(this.value == 'Title in English') this.value='';" onblur="if(this.value == '') this.value='Title in English';" placeholder="Title in English" style="width:730px;" />
+        {% endif %}
       </div>
       <div class="editor-other-div clearfix">
         <div>
@@ -66,17 +67,21 @@
           <option value="1"{% if article.open_style == 1 %} selected="selected"{% endif %}>新窗口打开</option>
           </select>
         </div>
+       {% if internationalization %}
         <div style="width:60px;margin-top:5px;text-align:center;font-size:14px;">
           <a href="javascript:void()" id="tran-en-btn">English</a>
           <a href="javascript:void()" id="tran-zh-btn">中文</a>
         </div>
+       {% endif %}
       </div>
     <div id="editor_container">
       <textarea id="editor_id" name="content" style="width:730px;height:500px;">{{ article | lang('content', 'zh') }}</textarea>
     </div>
+    {% if internationalization %}
     <div id="editor_eng_container">
       <textarea id="editor_eng" name="content_eng" style="width:730px;height:500px;">{{ article | lang('content', 'en') }}</textarea>
     </div>
+    {% endif %}
     <div class="submit-div">
       <input type="hidden" name="timestamp" value="{{ timestamp }}" />
       <input type="submit" value="提交" class="add-submit" />
@@ -89,6 +94,7 @@
 <script type="text/javascript">
 $(function(){
 
+{% if internationalization %}
   $("#editor_eng_container").hide();
   $("#tran-zh-btn").hide();
 
@@ -104,6 +110,7 @@ $(function(){
     $("#editor_eng_container").hide()
     $("#editor_container").show()
   });
+{% endif %}
 
 
   $('li.left-first-nav a').click(function(){

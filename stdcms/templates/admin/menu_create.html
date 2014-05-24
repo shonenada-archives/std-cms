@@ -15,19 +15,21 @@
     <div id="show_list" class="clearfix">
       <form action="{{ submit_url }}" method="post" id="submit-form">
         <table id="create_table">
-          <tr class="odd">
+          <tr class="">
             <td>排序</td>
             <td><input type="text" name="sort" class="order" /></td>
           </tr>
-          <tr class="even">
+          <tr class="">
             <td>标题</td>
             <td><input type="text" name="title" value=""/></td>
           </tr>
-          <tr class="odd">
+          {% if internationalization %}
+          <tr class="">
             <td>英文标题</td>
             <td><input type="text" name="title_eng" value=""/></td>
           </tr>
-          <tr class="even">
+          {% endif %}
+          <tr class="">
             <td>类型</td>
             <td>
               <select name="type" class="select-type first-menu-select">
@@ -38,11 +40,11 @@
               </select>
             </td>
           </tr>
-          <tr class="odd">
+          <tr class="">
             <td>外部 URL</td>
             <td><input disabled="true" type="text" id="outside_url" name="outside_url" class="outlinks" value="" /></td>
           </tr>
-          <tr class="even">
+          <tr class="">
             <td>打开方式</td>
             <td>
               <select name="open_style">
@@ -51,7 +53,7 @@
               </select>
             </td>
           </tr>
-          <tr class="odd">
+          <tr class="">
             <td>显示</td>
             <td>
               <select name="is_show">

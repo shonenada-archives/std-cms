@@ -34,8 +34,9 @@
     <form class="add-form" method="post" action="{{ siteUrl('admin/content/menu/' ~ post_menu.id ~ '/create') }}" class="">
       <div class="editor-title-div">
         <input type="text" name="title" value="请在这里输入标题" maxlength="50" class="editor-title" onfocus="if(this.value == '请在这里输入标题') this.value='';" onblur="if(this.value == '') this.value='请在这里输入标题';" placeholder="请在这里输入标题" style="width:730px;" />
-
+        {% if internationalization %}
         <input type="text" name="title_eng" value="" maxlength="50" class="editor-title" onfocus="if(this.value == 'Title in English') this.value='';" onblur="if(this.value == '') this.value='Title in English';" placeholder="Title in English" style="width:730px;" />
+        {% endif %}
       </div>
       <div class="editor-other-div clearfix">
         <div>
@@ -66,17 +67,21 @@
           <option value="1" >新窗口打开</option>
           </select>
         </div>
+        {% if internationalization %}
         <div style="width:60px;margin-top:5px;text-align:center;font-size:14px;">
           <a href="javascript:void()" id="tran-en-btn">English</a>
           <a href="javascript:void()" id="tran-zh-btn">中文</a>
         </div>
+        {% endif %}
       </div>
     <div id="editor_container">
       <textarea id="editor_id" name="content" style="width:730px;height:500px;"></textarea>
     </div>
+    {% if internationalization %}
     <div id="editor_eng_container">
       <textarea id="editor_eng" name="content_eng" style="width:730px;height:500px;"></textarea>
     </div>
+    {% endif %}
     <div class="submit-div">
       <input type="hidden" name="timestamp" value="{{ timestamp }}" />
       <input type="submit" value="提交" class="add-submit" />
@@ -85,9 +90,11 @@
   </div>
 </div>
 
+
 <script type="text/javascript">
 $(function(){
 
+{% if internationalization %}
   $("#editor_eng_container").hide();
   $("#tran-zh-btn").hide();
   $("#tran-en-btn").click(function() {
@@ -102,6 +109,7 @@ $(function(){
     $("#editor_eng_container").hide()
     $("#editor_container").show()
   });
+{% endif %}
 
   //导航栏
   $('li.left-first-nav a').click(function(){
