@@ -21,7 +21,9 @@ class Content extends AdminBase {
         }
 
         $focus_menu = Menu::getFirstMenu();
-
+        if (!$focus_menu) {
+            return self::render("admin/content.html", get_defined_vars());
+        }
         if ($focus_menu->isParent()) {
             $top_menu = $focus_menu;
             if ($top_menu->hasSub()) {
