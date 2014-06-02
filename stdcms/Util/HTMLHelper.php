@@ -15,6 +15,7 @@ class HTMLHelper {
 
     static public function removeHTML($input) {
         $no_html = preg_replace("|<[^>]+>|", '', $input);
+        $no_html = preg_replace("/&\S+?;/", '', $no_html);
         return $no_html;
     }
     
