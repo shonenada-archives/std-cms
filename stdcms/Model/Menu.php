@@ -116,6 +116,7 @@ class Menu extends ModelBase {
         $this->is_deleted = false;
         $this->is_intranet = false;
         $this->is_show = true;
+        $this->created = new \DateTime("now");
         $this->articles = new \Doctrine\Common\Collections\ArrayCollection();
         $this->_sub_menus = new \Doctrine\Common\Collections\ArrayCollection();
         $this->_categories = new \Doctrine\Common\Collections\ArrayCollection();
