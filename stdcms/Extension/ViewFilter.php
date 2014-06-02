@@ -9,6 +9,7 @@ class ViewFilter {
     static public $lang = null;
     static public $ellipsis = null;
     static public $removeHTML = null;
+    static public $getImgs = null;
 
     static public function init() {
 
@@ -33,10 +34,15 @@ class ViewFilter {
             return \Util\HTMLHelper::removeHTML($string);
         });
 
+        static::$getImgs = new \Twig_SimpleFilter('getImgs', function($content) {
+            return \Util\HTMLHelper::getImg($content);
+        });
+
         static::$filters = array(
             static::$lang,
             static::$ellipsis,
             static::$removeHTML,
+            static::$getImgs,
         );
     }
 

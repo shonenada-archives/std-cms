@@ -4,11 +4,11 @@ namespace Util;
 
 class HTMLHelper {
     
-    static public function getTeacherImg ($input) {
-        $teacher_imgs = array();
-        preg_match("/<[img|IMG][^>]+src=[\'\"](?<url>[\S]+)[\'\"][^>]+>/", $input, $teacher_imgs);
-        if (isset($teacher_imgs['url']))
-            return $teacher_imgs['url'];
+    static public function getImg ($input) {
+        $imgs = array();
+        preg_match("/<[img|IMG][^>]+src=[\'\"](?<url>[\S]+)[\'\"][^>]+>/", $input, $imgs);
+        if (isset($imgs['url']))
+            return $imgs['url'];
         else
             return null;
     }
