@@ -31,7 +31,7 @@ class ViewFilter {
         });
 
         static::$removeHTML = new \Twig_SimpleFilter('removeHTML', function($content) {
-            return \Util\HTMLHelper::removeHTML($string);
+            return \Util\HTMLHelper::removeHTML($content);
         });
 
         static::$getImgs = new \Twig_SimpleFilter('getImgs', function($content) {
