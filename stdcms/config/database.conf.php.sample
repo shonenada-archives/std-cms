@@ -7,7 +7,7 @@
  */
 
 return array(
-    'dbname' => 'app',
+    'dbname' => 'stdcms',
     'user' => 'root',
     'password' => '',
     'host' => 'localhost',
@@ -20,5 +20,5 @@ return array(
 
 // return array(
 //     'driver' => 'pdo_sqlite',
-//     'path' => mb_convert_encoding(DOCROOT . 'runtime/app.sqlite', 'UTF-8', 'GBK'),
+//     'path' => mb_convert_encoding(DOCROOT . 'runtime/stdcms.sqlite', 'UTF-8', 'GBK'),
 // );
