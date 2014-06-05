@@ -21,6 +21,8 @@ class Auth {
             View::addGlobalVariable($app, 'loggedUser', $user);
 
             $resource = $app->request->getPath();
+			$appBaseRoot = $app->config('baseRoot');
+            $resource = str_replace($appBaseRoot, '', $resource);
             $method = $app->request->getMethod();
             $ptable = require(STDROOT . "permissions.php");
             $auth = new \RBAC\Authentication();

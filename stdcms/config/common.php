@@ -3,6 +3,7 @@
 return array(
     'name' => 'stdcms',
     'pagesize' => 20,
+    'baseRoot' => '',
     'view' => new \Slim\Views\Twig(),
     'templates.path' => STDROOT. '/templates',
     'cookies.encrypt' => true,
