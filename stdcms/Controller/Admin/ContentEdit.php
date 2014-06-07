@@ -17,15 +17,10 @@ class ContentEdit extends AdminBase {
 
     static public function get ($aid) {
         $article = Article::find($aid);
-        $focus_menu = $article->menu;
-        if ($focus_menu->isParent()){
-            $focus_sub_menu = $focus_menu->getFirstSubMenu();
+        if ($article == null) {
+            self::redirect(self::urlFor('admin_content_get'));
         }
-        else {
-            $focus_sub_menu = $focus_menu;
-            $focus_menu = $focus_menu->parent;
-        }
-        $admin_menus = Menu::listAdminMenus();
+        $menus = Menu::getByTypes(array(2));
         $timestamp = $_SESSION['add_timestamp'] = time() * 10000 + rand(0, 9999);
         return self::render('admin/content_edit.html', get_defined_vars());
     }
@@ -34,42 +29,69 @@ class ContentEdit extends AdminBase {
         if ($_SESSION['add_timestamp'] != self::$request->post('timestamp')) {
             return self::redirect(self::urlFor('admin_content_edit_get', array('aid' => $aid)));
         }
+        $post = self::$request->post();
+        $info = '';
+        $success = true;
+        if ($_SESSION['add_timestamp'] != $post['timestamp']) {
+            $success = false;
+            $info = '时间参数不正确，请刷新后重新输入';
+        }
 
-        $article = Article::find($aid);
-        if ($article == null) {
-            return self::redirect(self::urlFor('admin_content_edit_get', array('aid' => $aid)));
+        if (empty($post['title'])) {
+            $success = false;
+            $info = '标题不能为空';
         }
-        $menu = $article->menu;
-        $category = CategoryModel::find(self::$request->post('category_id'));
-        $data = array(
-            'menu' => $menu,
-            'category' => $category,
-            'editor' => \GlobalEnv::get('user'),
-            'open_style' => self::$request->post('open_style'),
-            'redirect_url' => self::$request->post('url'),
-            'edit_time' => new \DateTime('now', new \DateTimezone('Asia/Shanghai')),
-        );
-        $article->populateFromArray($data)->save();
-        $zh = $article->translate('zh');
-        $en = $article->translate('en');
-        $zh->title = self::$request->post('title');
-        $zh->content = self::$request->post('content');
-        $en->title = self::$request->post('title_eng');
-        $en->content = self::$request->post('content_eng');
-        $zh->save();
-        $en->save();
 
-        if (empty($_SESSION['upload_buffer'])){
-            $upload_buffer = array();
-        } else {
-            $upload_buffer = $_SESSION['upload_buffer'];
+        $menu = Menu::find($post['menu']);
+        if ($menu == null) {
+            $info = '菜单不存在！';
+            $success = false;
         }
-        foreach($upload_buffer as $f) {
-            $f->article = $article;
-            $f->save();
+        if ($success) {
+            $article = Article::find($aid);
+            if ($article == null) {
+                return self::redirect(self::urlFor('admin_content_edit_get', array('aid' => $aid)));
+            }
+            $url ='';
+            if (isset($post['url'])) {
+                $url = $post['url'];
+            }
+            $menu = $article->menu;
+            $data = array(
+                'menu' => $menu,
+                'category' => null,
+                'editor' => \GlobalEnv::get('user'),
+                'open_style' => $post['open_style'],
+                'redirect_url' => $url,
+                'edit_time' => new \DateTime('now', new \DateTimezone('Asia/Shanghai')),
+            );
+            $article->populateFromArray($data)->save();
+            $zh = $article->translate('zh');
+            $zh->title = $post['title'];
+            $zh->content = $post['content'];
+            $zh->save();
+            if (isset($post['title_eng'])){
+                $en = $article->translate('en');
+                $en->title = $post['title_eng'];
+                $en->content = $post['content_eng'];
+                $en->save();
+            }
+            if (empty($_SESSION['upload_buffer'])){
+                $upload_buffer = array();
+            } else {
+                $upload_buffer = $_SESSION['upload_buffer'];
+            }
+            foreach($upload_buffer as $f) {
+                $f->article = $article;
+                $f->save();
+            }
+            $_SESSION['upload_buffer'] = array();
         }
-        $_SESSION['upload_buffer'] = array();
-        return self::redirect(self::urlFor('admin_content_view_get', array('mid' => $menu->id)));
+        return json_encode(array(
+            'success' => $success,
+            'info' => $info,
+            'next' => self::urlFor('admin_content_get')
+        ));
     }
 
 }

@@ -8,17 +8,20 @@ use \Model\Article;
 use \Model\Permission;
 
 
-class ContentCreate extends AdminBase {
+class ContentSingleCreate extends AdminBase {
 
-    static public $url = '/admin/content/create';
+    static public $url = '/admin/content/single/:mid/create';
+    static public $conditions = array('mid' => '\d+');
 
-    static public function get () {
+
+    static public function get ($mid) {
+        $menu = Menu::find($mid);
         $menus = Menu::getByTypes(array(2));
         $timestamp = $_SESSION['add_timestamp'] = time() * 10000 + rand(0, 9999);
         return self::render('admin/content_create.html', get_defined_vars());
     }
 
-    static public function post () {
+    static public function post ($mid) {
         $post = self::$request->post();
         $info = '';
         $success = true;
@@ -49,16 +52,12 @@ class ContentCreate extends AdminBase {
         if ($success) {
             $article = new Article();
             $user = \GlobalEnv::get('user');
-            $url ='';
-            if (isset($post['url'])) {
-                $url = $post['url'];
-            }
             $data = array(
                 'menu' => $menu,
                 'category' => null,
                 'author' => $user,
                 'editor' => $user,
-                'redicret_url' => $url,
+                'redicret_url' => $post['url'],
                 'edit_time' => new \DateTime("now"),
             );
             $open_style = $post['open_style'];
@@ -89,6 +88,7 @@ class ContentCreate extends AdminBase {
             }
             $_SESSION['upload_buffer'] = array();
         }
+
         return json_encode(array(
             'success' => $success,
             'info' => $info,

@@ -9,7 +9,7 @@
 namespace Model;
 
 /** 
- * @Entity 
+ * @Entity
  * @Table(name="menu")
  *
  * @property integer   $id          

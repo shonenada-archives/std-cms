@@ -258,11 +258,11 @@ class Article extends ModelBase {
         }
     }
 
-    static public function getListByMenuId($page, $pagesize, $mid, $order_by=array(array('id', 'ASC'))) {
+    static public function getListByMenuId($page, $pagesize, $mid, $orderBy=array(array('id', 'ASC'))) {
         $order_str = "";
-        foreach($order_by as $o) {
+        foreach ($orderBy as $o) {
             if (in_array(strtoupper($o[1]), array('ASC', 'DESC'))) {
-                $order_str .= sprintf('n.%s %s%s', $o[0], $o[1], $o == $order_by[count($order_by) - 1] ? '' : ', ');
+                $order_str .= sprintf('n.%s %s%s', $o[0], $o[1], $o == $orderBy[count($orderBy) - 1] ? '' : ', ');
             }
         }
         $dql = sprintf(
@@ -278,15 +278,31 @@ class Article extends ModelBase {
         return $query->useQueryCache(false)->getResult();
     }
 
-    static public function paginateWithMid($page, $pagesize, $mid, $order_by='id', $asc=true) {
+    static public function paginateWithMids($page, $pagesize, $mids=array(), $orderBy='id', $asc=true) {
+        $midsStr = '(' . implode(', ', $mids) . ')';
+
         $dql = sprintf(
             'SELECT n FROM %s n '.
             'WHERE n.is_deleted = 0 AND '.
-            'n.menu_id = %s '.
+            'n.menu_id in %s '.
             'ORDER BY n.%s %s',
             get_called_class(),
-            $mid,
-            $order_by,
+            $midsStr,
+            $orderBy,
+            $asc ? 'ASC' : 'DESC'
+        );
+        $query = static::em()->createQuery($dql)->setFirstResult($pagesize*($page-1))->setMaxResults($pagesize);
+        $pager = new \Doctrine\ORM\Tools\Pagination\Paginator($query);
+        return $pager;
+    }
+
+    static public function paginate($page, $pagesize, $orderBy='id', $asc=true) {
+        $dql = sprintf(
+            'SELECT n FROM %s n '.
+            'WHERE n.is_deleted = 0 '.
+            'ORDER BY n.%s %s',
+            get_called_class(),
+            $orderBy,
             $asc ? 'ASC' : 'DESC'
         );
         $query = static::em()->createQuery($dql)->setFirstResult($pagesize*($page-1))->setMaxResults($pagesize);

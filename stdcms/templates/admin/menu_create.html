@@ -1,76 +1,133 @@
-{% extends 'admin/menu.html' %}
+{% extends 'admin/base.html' %}
 
-{% block menu_list %}
-  <div id="content_right" class="clearfix">
-    <div id="content_right_top">
-      {% if mid %}
-      {% set submit_url = siteUrl('admin/menu/' ~ menu.id ~ '/create') %}
-      <span id="location">当前位置：<a href="{{ siteUrl('admin/menu/') }}">菜单管理</a>&nbsp;&gt;&nbsp;{{ menu.defaultTitle }}&nbsp;&gt;&nbsp;新增子菜单</span>
-      {% else %}
-      {% set submit_url = siteUrl('admin/menu/create') %}
-      <span id="location">当前位置：菜单管理&nbsp;&gt;&nbsp;新增一级菜单</span>
+{% block breadcrumb %}
+<a href="{{ siteUrl('admin/menu') }}">菜单管理</a>
+<div class="breadcrumb_divider"></div>
+<a class="current">新建菜单</a>
+{% endblock %}
+
+{% block static %}
+<style>
+.disabled-option {
+  background: #aaa;
+}
+</style>
+<script>
+$(function() {
+  $('.parent-node').live('change', function() {
+    var val = parseInt($(this).val(), 10);
+    if (val == 0) {
+      if ($('#type').val() == 0) {
+        $('#type').val(1);
+      }
+      $('#option-node-menu').attr('disabled', 'disabled');
+      $('#option-node-menu').addClass('disabled-option');
+    }
+    else {
+      $('#option-node-menu').removeAttr('disabled');
+      $('#option-node-menu').removeClass('disabled-option');
+    }
+  });
+
+  $("#type").live("change", function(){
+    var val = parseInt($(this).val(), 10);
+    var input = $("#outside_url");
+    if (val == 0) {
+      $(this).val(0);
+      input.attr('disabled', 'disabled');
+    }
+    else if (val == 1) {
+      $(this).val(1);
+      input.attr('disabled', 'disabled');
+    }
+    else if (val == 2) {
+      $(this).val(2);
+      input.attr('disabled', 'disabled');
+    }
+    else if (val == 3) {
+      $(this).val(3);
+      input.removeAttr('disabled');
+    }
+  });
+
+  $("#submit-form").ajaxForm({
+    dataType: 'json',
+    success: function(response) {
+      console.log(response);
+      if (response.success) {
+        alert('添加成功');
+        location.href = document.referrer;
+      }
+      else {
+        common.warn(response.info);
+      }
+    },
+  });
+});
+</script>
+{% endblock %}
+
+{% block content %}
+<article class="module width_full">
+  <header><h3>新建菜单</h3></header>
+    <form action="" method="post" id="submit-form">
+    <div class="module_content">
+      <fieldset>
+        <label>标题</label>
+        <input type="text" name="title" />
+      </fieldset>
+      {% if internationalization %}
+      <fieldset>
+        <label>英文标题</label>
+        <input type="text" name="title_eng" />
+      </fieldset>
       {% endif %}
+      <fieldset style="width: 48%; float: left; margin-right: 3%;">
+        <label>排序</label>
+        <input type="text" name="sort" style="width: 92%;" />
+      </fieldset>
+      <fieldset style="width: 48%; float: left;">
+        <label>父节点</label>
+        <select style="width: 92%;" name="parent" class="parent-node">
+          <option value="0">--- 无 ---</option>
+          {% for node in node_menus %}
+          <option value="{{ node.id }}">{{ node.title }}</option>
+          {% endfor %}
+        </select>
+      </fieldset>
+      <fieldset style="width:48%; float:left; margin-right: 3%;">
+        <label>类型</label>
+        <select style="width: 92%;" name="type" id="type">
+          <option value="0" id="option-node-menu" class="disabled-option" disabled="disabled">节点菜单</option>
+          <option value="1">单页内容</option>
+          <option value="2">多记录列表</option>
+          <option value="3">外部URL</option>
+        </select>
+      </fieldset>
+      <fieldset style="width:48%; float:left;">
+        <label>外部 URl</label>
+        <input disabled="true" type="text" id="outside_url" name="outside_url" class="outlinks" value="" style="width: 92%;"/>
+      </fieldset>
+      <fieldset style="width:48%; float:left; margin-right: 3%;">
+        <label>打开方式</label>
+        <select style="width:92%;" name="open_style">
+          <option value="0">原窗口打开</option>
+          <option value="1">新窗口打开</option>
+        </select>
+      </fieldset>
+      <fieldset style="width:48%; float:left;">
+        <label>显示</label>
+        <select style="width:92%;" name="is_show">
+          <option value="1">是</option>
+          <option value="0">否</option>
+        </select>
+      </fieldset><div class="clear"></div>
     </div>
-
-    <div id="show_list" class="clearfix">
-      <form action="{{ submit_url }}" method="post" id="submit-form">
-        <table id="create_table">
-          <tr class="">
-            <td>排序</td>
-            <td><input type="text" name="sort" class="order" /></td>
-          </tr>
-          <tr class="">
-            <td>标题</td>
-            <td><input type="text" name="title" value=""/></td>
-          </tr>
-          {% if internationalization %}
-          <tr class="">
-            <td>英文标题</td>
-            <td><input type="text" name="title_eng" value=""/></td>
-          </tr>
-          {% endif %}
-          <tr class="">
-            <td>类型</td>
-            <td>
-              <select name="type" class="select-type first-menu-select">
-                <option value="0">节点菜单</option>
-                <option value="1">单页内容</option>
-                <option value="2">多记录列表</option>
-                <option value="3">外部URL</option>
-              </select>
-            </td>
-          </tr>
-          <tr class="">
-            <td>外部 URL</td>
-            <td><input disabled="true" type="text" id="outside_url" name="outside_url" class="outlinks" value="" /></td>
-          </tr>
-          <tr class="">
-            <td>打开方式</td>
-            <td>
-              <select name="open_style">
-                <option value="0">原窗口打开</option>
-                <option value="1">新窗口打开</option>
-              </select>
-            </td>
-          </tr>
-          <tr class="">
-            <td>显示</td>
-            <td>
-              <select name="is_show">
-                <option value="1">是</option>
-                <option value="0">否</option>
-              </select>
-            </td>
-          </tr>
-        </table>
-
-        <div class="text_end">
-            <span>
-                <a data-href="{{ submit_url }}" href="{{ submit_url }}" id="submit">保存</a>
-                <a href="javascript:history.back();" id="cancel">取消</a>
-            </span>
-        </div>
-      </form>
+  <footer>
+    <div class="submit_link">
+      <input type="submit" id="submit" value="创建" class="alt_btn">
     </div>
-  </div>
+  </footer>
+  </form>
+</article>
 {% endblock %}
