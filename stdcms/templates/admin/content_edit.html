@@ -67,7 +67,7 @@ $(function() {
           {% for menu in menus %}
           <option value="{{ menu.id }}" {% if article.menu.id == menu.id %}selected="selected"{% endif %}>{{ menu.defaultTitle }}</option>
           {% for sub in menu.subMenus %}
-          <option value="{{ sub.id }}" {% if article.menu.id == menu.id %}selected="selected"{% endif %}>└ {{ sub.defaultTitle }}</option>
+          <option value="{{ sub.id }}" {% if article.menu.id == sub.id %}selected="selected"{% endif %}>└ {{ sub.defaultTitle }}</option>
           {% endfor %}
           {% endfor %}
         {% endif %}

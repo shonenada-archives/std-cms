@@ -102,7 +102,6 @@ $(function () {
     <table class="tablesorter" cellspacing="0">
       <thead>
         <tr>
-          <th>排序</th>
           <th>标题</th>
           <th>浏览量</th>
           <th>操作</th>
@@ -111,9 +110,6 @@ $(function () {
       <tbody>
         {% for each in singlePageMenu %}
         <tr data-aid="{{ each.id }}">
-          <td style="width: 60px;">
-            <input type="text" name="sort" value="{{ each.sort }}" style="width: 50px;" />
-          </td>
           <td>
             {% if each.is_top == 1 %}
             <img src="{{ siteUrl('static/images/admin/icon_up.gif') }}" />
@@ -131,15 +127,15 @@ $(function () {
             {{ each.articles.first.view_count }}
           </td>
           <td>
-            {% if each.redirect_url %}
-            <a href="{{ each.redirect_url }}" style="color:red" target="_blank">转跳</a>&nbsp;&nbsp;
-            {% else %}
-            <a href="{{ siteUrl('article/' ~ each.articles.first.id ) }}" target="_blank">查看</a>&nbsp;&nbsp;
-            {% endif %}
             {% if each.articles.count() > 0 %}
             <a href="{{ siteUrl('admin/content/' ~ each.articles.first.id ~ '/edit') }}">修改</a>&nbsp;&nbsp;
             {% else %}
             <a href="{{ siteUrl('admin/content/single/' ~ each.id ~ '/create') }}">创建</a>&nbsp;&nbsp;
+            {% endif %}
+            {% if each.redirect_url %}
+            <a href="{{ each.redirect_url }}" style="color:red" target="_blank">转跳</a>&nbsp;&nbsp;
+            {% else %}
+            <a href="{{ siteUrl('article/' ~ each.articles.first.id ) }}" target="_blank">查看</a>&nbsp;&nbsp;
             {% endif %}
             <br />
           </td> 

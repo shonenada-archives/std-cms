@@ -56,7 +56,6 @@ class ContentEdit extends AdminBase {
             if (isset($post['url'])) {
                 $url = $post['url'];
             }
-            $menu = $article->menu;
             $data = array(
                 'menu' => $menu,
                 'category' => null,
