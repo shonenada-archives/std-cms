@@ -44,7 +44,7 @@ float: left;
 margin: 0;
 font-size: 22px;
 display: block;
-width: 23%;
+width: 20%;
 height: 55px;
 font-weight: normal;
 text-align: left;
@@ -706,7 +706,7 @@ margin: -5px 0 5px 0;
 text-transform: uppercase;
 }
 
-fieldset input[type=text] {
+fieldset input[type=text], fieldset input[type=password] {
 -webkit-border-radius: 5px;
 -moz-border-radius: 5px;
 border-radius: 5px;
