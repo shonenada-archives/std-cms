@@ -7,18 +7,19 @@
  */
 
 return array(
-    'dbname' => 'stdcms',
-    'user' => 'root',
-    'password' => '',
-    'host' => 'localhost',
-    'driver' => 'pdo_mysql'
-    'charset' => 'utf8',
-    'driverOptions' => array(
-        1002=>'SET NAMES utf8'
-    )
+    'master' => array(
+        'dbname' => 'stdcms',
+        'user' => 'root',
+        'password' => '',
+        'host' => 'localhost',
+        'driver' => 'pdo_mysql'
+        'charset' => 'utf8',
+        'driverOptions' => array(
+            1002=>'SET NAMES utf8'
+        ),
+    ),
+    'sqlite' => array(
+        'driver' => 'pdo_sqlite',
+        'path' => mb_convert_encoding(DOCROOT . 'runtime/stdcms.sqlite', 'UTF-8', 'GBK'),
+    ),
 );
-
-// return array(
-//     'driver' => 'pdo_sqlite',
-//     'path' => mb_convert_encoding(DOCROOT . 'runtime/stdcms.sqlite', 'UTF-8', 'GBK'),
-// );

@@ -10,6 +10,8 @@ namespace Model;
 
 class ModelBase {
 
+    static protected $conn = 'master';
+
     // 永久化对象
     public function save($flush=true) {
         static::em()->persist($this);
@@ -62,7 +64,7 @@ class ModelBase {
     }
 
     static public function em() {
-        return ORMManager::getEntityManager();
+        return ORMManager::get(self::$conn);
     }
 
     static public function paginate($page, $pagesize) {
@@ -128,35 +130,53 @@ class ModelBase {
 
 class ORMManager {
 
-    static public $entityManager = null;
+
+    static public $conn = array();
+    static public $managers = array();
+    static public $config = null;
+    static public $eventManager = null;
 
     public static function init() {
         if (!file_exists(STDROOT . 'config/database.conf.php'))
             exit('Database config file not found!');
 
-        $db_params = require(STDROOT . 'config/database.conf.php');
+        $connections = require(STDROOT . 'config/database.conf.php');
+        foreach($connections as $name => $connInfo) {
+            static::$conn[$name] = $connInfo;
+        }
 
-        $config = new \Doctrine\ORM\Configuration();
-        $eventManager = new \Doctrine\Common\EventManager();
+        static::$config = new \Doctrine\ORM\Configuration();
+        static::$eventManager = new \Doctrine\Common\EventManager();
 
-        $driver = $config->newDefaultAnnotationDriver(array(STDROOT . "Model/"));
+        $driver = static::$config->newDefaultAnnotationDriver(array(STDROOT . "Model/"));
 
-        $config->setMetadataDriverImpl($driver);
-        $config->setProxyDir(STDROOT. 'cache/');
-        $config->setProxyNamespace("DoctrineProxy");
+        static::$config->setMetadataDriverImpl($driver);
+        static::$config->setProxyDir(STDROOT. 'cache/');
+        static::$config->setProxyNamespace("DoctrineProxy");
 
         if (extension_loaded('wincache')) {
-            $config->setMetadataCacheImpl(new \Doctrine\Common\Cache\WinCache());
-            $config->setQueryCacheImpl(new \Doctrine\Common\Cache\WinCache());
-            $config->setResultCacheImpl(new \Doctrine\Common\Cache\WinCache());
+            static::$config->setMetadataCacheImpl(new \Doctrine\Common\Cache\WinCache());
+            static::$config->setQueryCacheImpl(new \Doctrine\Common\Cache\WinCache());
+            static::$config->setResultCacheImpl(new \Doctrine\Common\Cache\WinCache());
         } else if (extension_loaded('apc')) {
-            $config->setMetadataCacheImpl(new \Doctrine\Common\Cache\ApcCache());
-            $config->setQueryCacheImpl(new \Doctrine\Common\Cache\ApcCache());
-            $config->setResultCacheImpl(new \Doctrine\Common\Cache\ApcCache());
+            static::$config->setMetadataCacheImpl(new \Doctrine\Common\Cache\ApcCache());
+            static::$config->setQueryCacheImpl(new \Doctrine\Common\Cache\ApcCache());
+            static::$config->setResultCacheImpl(new \Doctrine\Common\Cache\ApcCache());
         } else {
-            $config->setMetadataCacheImpl(new \Doctrine\Common\Cache\ArrayCache());
+            static::$config->setMetadataCacheImpl(new \Doctrine\Common\Cache\ArrayCache());
         }
-        self::$entityManager = \Doctrine\ORM\EntityManager::create($db_params, $config, $eventManager);
+    }
+
+    static public function get($name) {
+        assert(isset(static::$conn[$name]));
+
+        if (!isset(self::$managers[$name])) {
+            self::$managers[$name] = \Doctrine\ORM\EntityManager::create(
+                self::$conn[$name], static::$config, static::$eventManager
+            );
+        }
+
+        return self::$managers[$name];
     }
 
     static public function getEntityManager() {
