@@ -361,6 +361,7 @@ class Article extends ModelBase {
         $builder = $builder->where('c.title LIKE :keyword');
         $builder = $builder->andWhere('n.is_deleted = 0');
         $builder = $builder->andWhere('l.code = :lang_code');
+        $builder = $builder->andWhere('n.is_deleted = 0');
         $builder = $builder->orderBy('n.is_top DESC, n.created', 'DESC');  # what the hell ??
         $builder = $builder->setParameter('keyword', '%'.$keyword.'%');
         $builder = $builder->setParameter('lang_code', \Util\Helper::getUserLanguageCode());
