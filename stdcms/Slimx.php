@@ -22,7 +22,7 @@ class Slimx extends \Slim\Slim {
         $cls = sprintf("\Controller\\%s", str_replace('.', '\\', $controller));
         $vars = get_class_vars($cls);
 
-        if (array_key_exists('url', $vars)) 
+        if (array_key_exists('url', $vars))
             $url = $vars['url'];
         else
             $url = '/' . strtolower(str_replace('.', '/', $controller));
